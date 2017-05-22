@@ -551,8 +551,8 @@ let ``Differentiation and Taylor Series`` () =
 
     Calculus.antidifferentiate x (cos(x)*exp(x)) ==> "C + (1/2)*(exp(x)*sin(x) + exp(x)*cos(x))"
     Calculus.antidifferentiate x (sin(x)*exp(x)) ==> "C + (1/2)*(exp(x)*sin(x) - exp(x)*cos(x))"
-    printfn "-------------"
-    Calculus.antidifferentiate x (sin(2*x)*exp(x)) ==> "C + (1/2)*exp(x)*(sin(x) - cos(x))"
+    Calculus.antidifferentiate x (sin(2*x)*exp(x)) ==> "C + (4/5)*((1/4)*exp(x)*sin(2*x) - (1/2)*exp(x)*cos(2*x))"
+    Calculus.antidifferentiate x (cos(2*x)*exp(x)) ==> "C + (4/5)*((1/2)*exp(x)*sin(2*x) + (1/4)*exp(x)*cos(2*x))"
 
     //Calculus.antidifferentiate x (exp(x)*cos(x)) ==> "ln(x)*sin(x) - Si(x)"
     //Calculus.antidifferentiate x (x*sin(x)) ==> "sin(x) + x*cos(x)"

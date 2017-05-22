@@ -75,8 +75,7 @@ module Calculus =
     let rec antidifferentiate_rec s l = function
         | x when x = s -> number 1 /  number 2 * s * s
         | Undefined as x -> failwith "not implemented (1)"
-        | Number num as n when num.IsZero -> 
-            printfn "1>Number:"
+        | Number num as n when num.IsZero ->
             number 0
         | Number num as n when not num.IsZero -> n * s
         | Approximation approx -> failwith "not implemented (3)"
@@ -84,14 +83,11 @@ module Calculus =
         | Constant cons -> failwith "not implemented (5)"
         | Sum xs -> failwith "not implemented (6)"
         | Product _ as p -> integration_product s l p
-        | Power (r, Number num) as p when Number num = number -1 -> 
-            printfn "1>power:"
+        | Power (r, Number num) as p when Number num = number -1 ->
             Function (Ln, r)
-        | Power (r, Number num) as p when Number num = number -2 -> 
-            printfn "2>power:"
+        | Power (r, Number num) as p when Number num = number -2 ->
             number -1 * Power(r, number -1)
-        | Power (r, Number num) as p when not num.IsPositive -> 
-            printfn "3>power:"
+        | Power (r, Number num) as p when not num.IsPositive ->
             number 1 / ((Number num + number 1) * Power(r, (number -1 * Number num) - number 1))
         | Power (r, e) as p -> e
         | Function (Exp, x) as f -> (s/x) * f
@@ -115,84 +111,46 @@ module Calculus =
 
     and integration_product s l = function
         | Product (Number num :: xs) ->
-            printfn "1>product: x: {%s * %s, d%s}" (num.ToString()) (xs.ToString()) (s.ToString())
             let xs_product = elements_to_product xs
             try
                 Number num * antidifferentiate_rec s l xs_product
             with
-                | ApplyLinearityRuleException (n, e, t) -> raise(ApplyLinearityRuleException (n, Number num * e, t))
+                | ApplyLinearityRuleException (n, e, t) -> 
+                    if (Number num) = number -1 then
+                        raise(ApplyLinearityRuleException (n * number -1, Number num * e, t))
+                    else
+                        raise(ApplyLinearityRuleException (Number num * n, Number num * e, t))
         | Product (x :: [Number num]) ->
-            printfn "2>product: x: {%s * %s}" (num.ToString()) (x.ToString())         
             Number num * antidifferentiate_rec s l x
         | Product (x::xs) when match_power_rule s x (elements_to_product xs) ->
-            printfn "3>product: x: {%s * %s}" (x.ToString()) (xs.ToString()) 
             Power(x, number 2) / 2
         | Product (x::xs) when match_power_rule s (elements_to_product xs) x ->
-            printfn "4>product: x: {%s * %s}" (x.ToString()) (xs.ToString()) 
             Power((elements_to_product xs), number 2) / 2
         | Product (x::xs) when match_sine_integral_rule s (x::xs) ->
-            printfn "5>product: x: {%s * %s}" (x.ToString()) (xs.ToString()) 
             Function(Si, s)
         | Product (x::xs) as p ->
-            printfn "6>product: x: {%s}" (x.ToString())
             let xs_product = elements_to_product xs
             let nonconvergence_detected = (List.exists (fun e -> e.ToString() = p.ToString()) l)
-            printfn "         : xs: {%s}" (xs.ToString())
-            //printfn "         : xs_product: {%s}" (xs_product.ToString())
-            //printfn "         : nonconvergence_detected: {%b}" (nonconvergence_detected)
-            //printfn "         : l.size: {%d}" (List.length l)
             if nonconvergence_detected then
                 let orig = last l
                 let ratio = orig / p
-                //printfn "         : orig: {%s}" (orig.ToString())
-                //printfn "         : ratio: {%s}" (ratio.ToString())
                 match ratio with
                     | Number n -> 
-                        printfn "Should Apply Linearity"
                         raise(ApplyLinearityRuleException ((Number n), zero, p))
                     | _ -> failwith "cannot converge (infinite recursion)"
             let ixs = antidifferentiate_rec s (p::l) xs_product
             let dx = differentiate s x
             let product = dx * xs_product
-            //let ratio = (p) / (dx * ixs)
-            //printfn "         : ixs: {%s}" (ixs.ToString())
-            //printfn "         : dx: {%s}" (dx.ToString())
-            //printfn "         : ratio: {%s}" (ratio.ToString())
-            //printfn "         : p.toString(): {%s}" (p.ToString())
-            //printfn "         : l: {%A}" (l)
-            //printfn "         : nonconvergence_x: {%b}" (nonconvergence_x)
-            //printfn "         : nonconvergence_xs: {%b}" (nonconvergence_xs)
-            //printfn "         : product: {%s}" (product.ToString())
 
             try
-                printfn "         : trying: %s - I(%s)" ((x*ixs).ToString()) ((dx*ixs).ToString())
                 x * ixs - antidifferentiate_rec s (p::l) (dx * ixs)
             with
-                | ApplyLinearityRuleException (n, e, t) when (t.ToString() = p.ToString()) ->
-                    printfn ">> ApplyLinearityRuleException_last %s" (n.ToString())
-                    printfn "         : l.size: {%d}" (List.length l)
-                    printfn "         : n: {%s}" (n.ToString())
-                    printfn "         : e: {%s}" (e.ToString())
-                    printfn "         : resulting: %s" (((x * ixs - e) / (1+n)).ToString())
-                    (x * ixs - e) / (1+n)
-                | ApplyLinearityRuleException (n, e, t) when (List.length l > 0) ->
-                    printfn ">> ApplyLinearityRuleException %s" (n.ToString())
-                    printfn "         : l.size: {%d}" (List.length l)
-                    printfn "         : n: {%s}" (n.ToString())
-                    printfn "         : e: {%s}" (e.ToString())
-                    printfn "         : resulting: %s" ((x * ixs).ToString())
-                    raise(ApplyLinearityRuleException(n, x*ixs - e, t))
-                    x * ixs
+                | ApplyLinearityRuleException (n, e, t) when (t.ToString() = p.ToString()) -> (x * ixs - e) / (1-n)
+                | ApplyLinearityRuleException (n, e, t) when (List.length l > 0) -> raise(ApplyLinearityRuleException(n, x*ixs - e, t))
                 | Failure msg -> 
-                    printfn ">> <%s>" msg
                     match msg with
-                        | _ -> 
-                            printfn ">> Trying the other way"
-                            antidifferentiate_rec s (p::l) (Product(xs_product :: x :: []))//(xs_product * x)
-                //one
-        | Product ([]) -> 
-            printfn "7>product:"
-            s
+                        | _ -> antidifferentiate_rec s (p::l) (Product(xs_product :: x :: []))
+        | Product ([]) -> s
     
     [<CompiledName("Antidifferentiate")>]
     let antidifferentiate s x = (antidifferentiate_rec s [] x) + symbol "C"
