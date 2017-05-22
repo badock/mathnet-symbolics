@@ -134,6 +134,7 @@ module private InfixFormatter =
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
         | Cot -> "cot" | Sec -> "sec" | Csc -> "csc"
+        | Si -> "Si" | Ci -> "Ci"
 
     // priority: 1=additive 2=product 3=power
 

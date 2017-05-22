@@ -97,6 +97,12 @@ module Approximation =
     let csc = function
         | Real a -> Real (Trig.Csc a)
         | Complex a -> Complex (Complex.csc a)
+    //let si = function
+    //    | Real a -> Real (Trig.Si a)
+    //    | Complex a -> Complex (Complex.Si a)
+    //let ci = function
+        //| Real a -> Real (Trig.Ci a)
+        //| Complex a -> Complex (Complex.Ci a)
 
     let apply f a =
         match f with
@@ -115,6 +121,8 @@ module Approximation =
         | Cot -> cot a
         | Sec -> sec a
         | Csc -> csc a
+        //| Si -> si a
+        //| Ci -> ci a
 
     let isZero = function
         | Real x when x = 0.0 -> true

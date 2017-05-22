@@ -9,6 +9,7 @@ type Function =
     | Cot | Sec | Csc 
     | Cosh | Sinh | Tanh
     | Asin | Acos | Atan
+    | Si | Ci
 
 type Constant =
     | E

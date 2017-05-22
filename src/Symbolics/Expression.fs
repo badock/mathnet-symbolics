@@ -377,6 +377,12 @@ module Operators =
         | Number n when n.IsNegative -> negate (Function (Tan, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Tan, multiply (Number -n) (Product ax)))
         | x -> Function (Tan, x)
+    let si = function
+        | Zero -> one
+        | x -> Function (Si, x)
+    let ci = function
+        | Zero -> zero
+        | x -> Function (Ci, x)
 
     let cot x = Function (Cot, x)
     let sec x = Function (Sec, x)
@@ -387,6 +393,8 @@ module Operators =
     let arcsin x = Function (Asin, x)
     let arccos x = Function (Acos, x)
     let arctan x = Function (Atan, x)
+    //let si x = Function (Si, x)
+    //let ci x = Function (Ci, x)
 
     let apply f x =
         match f with
@@ -405,6 +413,8 @@ module Operators =
         | Cot -> cot x
         | Sec -> sec x
         | Csc -> csc x
+        | Si -> sec x
+        | Ci -> csc x
 
     let applyN (f: Function) (xs: Expression list) = failwith "not supported yet"
 
@@ -458,6 +468,8 @@ type Expression with
     static member Cot (x) = Operators.cot x
     static member Csc (x) = Operators.csc x
     static member Sec (x) = Operators.sec x
+    static member Si (x) = Operators.si x
+    static member Ci (x) = Operators.ci x
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs

@@ -516,6 +516,50 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
     Calculus.differentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
 
+    Calculus.antidifferentiate x (number 0) ==> "C"
+    Calculus.antidifferentiate x (number 1) ==> "C + x"
+    Calculus.antidifferentiate x (number 2) ==> "C + 2*x"
+    Calculus.antidifferentiate x (a) ==> "C + a*x"
+    Calculus.antidifferentiate x (x) ==> "C + (1/2)*x^2"
+    Calculus.antidifferentiate x (1/x) ==> "C + ln(x)"
+    Calculus.antidifferentiate x (1/x**2) ==> "C - 1/x"
+    Calculus.antidifferentiate x (1/x**3) ==> "C - (1/2)/x^2"
+    Calculus.antidifferentiate x (1/x**20) ==> "C - (1/19)/x^19"
+    Calculus.antidifferentiate x (sin(x)) ==> "C - cos(x)"
+    Calculus.antidifferentiate x (cos(x)) ==> "C + sin(x)"
+    Calculus.antidifferentiate x (tan(x)) ==> "C - ln(cos(x))"
+    Calculus.antidifferentiate x (exp(x)) ==> "C + exp(x)"
+    Calculus.antidifferentiate x (ln(x)) ==> "C - x + x*ln(x)"
+    Calculus.antidifferentiate x (sin(2*x)) ==> "C - (1/2)*cos(2*x)"
+    Calculus.antidifferentiate x (cos(2*x)) ==> "C + (1/2)*sin(2*x)"
+    Calculus.antidifferentiate x ((1Q/2) * sin(2*x)) ==> "C - (1/4)*cos(2*x)"
+    Calculus.antidifferentiate x (sin(2*x) * (1Q/2)) ==> "C - (1/4)*cos(2*x)"
+    Calculus.antidifferentiate x ((1Q/2) * cos(2*x)) ==> "C + (1/4)*sin(2*x)"
+    Calculus.antidifferentiate x (cos(2*x) * (1Q/2)) ==> "C + (1/4)*sin(2*x)"
+    Calculus.antidifferentiate x ((1Q/2)*x**(-2)) ==> "C - (1/2)/x"
+    Calculus.antidifferentiate x (x**(-2)*(1Q/2)) ==> "C - (1/2)/x"
+
+    Calculus.match_power_rule x (sin(x)) (cos(x)) --> true
+    Calculus.match_power_rule x (cos(x)) (sin(x)) --> false
+
+    // Power Rule
+    Calculus.antidifferentiate x (sin(x)*cos(x)) ==> "C + (1/2)*sin(x)^2"
+    Calculus.antidifferentiate x (cos(x)*sin(x)) ==> "C + (1/2)*sin(x)^2"
+    // Integration By Part (one integration by part)
+    Calculus.antidifferentiate x (ln(x)*cos(x)) ==> "C + ln(x)*sin(x) - Si(x)"
+    Calculus.antidifferentiate x (cos(x)*ln(x)) ==> "C + ln(x)*sin(x) - Si(x)"
+
+    Calculus.antidifferentiate x (cos(x)*exp(x)) ==> "C + (1/2)*(exp(x)*sin(x) + exp(x)*cos(x))"
+    Calculus.antidifferentiate x (sin(x)*exp(x)) ==> "C + (1/2)*(exp(x)*sin(x) - exp(x)*cos(x))"
+    printfn "-------------"
+    Calculus.antidifferentiate x (sin(2*x)*exp(x)) ==> "C + (1/2)*exp(x)*(sin(x) - cos(x))"
+
+    //Calculus.antidifferentiate x (exp(x)*cos(x)) ==> "ln(x)*sin(x) - Si(x)"
+    //Calculus.antidifferentiate x (x*sin(x)) ==> "sin(x) + x*cos(x)"
+    //Calculus.antidifferentiate x (a*x**2) ==> "2*a*x"
+    //Calculus.antidifferentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
+    //Calculus.antidifferentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
+
     Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
     Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"
     Calculus.taylor 3 x 1Q (ln(x)) ==> "-3/2 + 2*x - (1/2)*x^2"
